@@ -1,5 +1,6 @@
 const dateFormat = require('../utils/dateFormat');
 const { Schema, model, Types } = require('mongoose');
+const thoughtSchema = require('./thought')
 
 const ReactionSchema = new Schema(
     {
@@ -15,7 +16,7 @@ const ReactionSchema = new Schema(
         get: createdAtVal => dateFormat(createdAtVal)
       },
       // use ThoughtSchema to validate data for a reply
-      replies: [ThoughtSchema]
+       replies: []
     },
     {
       toJSON: {

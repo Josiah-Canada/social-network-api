@@ -1,4 +1,5 @@
-const { Reaction, Thought } = require('../models');
+const Thought = require("../models/thought");
+const Reaction = require("../models/reaction");
 
 const ReactionController = {
   // add Reaction to Thought
@@ -12,14 +13,14 @@ const ReactionController = {
           { new: true }
         );
       })
-      .then(dbThoughtData => {
+      .then((dbThoughtData) => {
         if (!dbThoughtData) {
-          res.status(404).json({ message: 'No Thought found with this id!' });
+          res.status(404).json({ message: "No Thought found with this id!" });
           return;
         }
         res.json(dbThoughtData);
       })
-      .catch(err => res.json(err));
+      .catch((err) => res.json(err));
   },
 
   addReply({ params, body }, res) {
@@ -28,22 +29,22 @@ const ReactionController = {
       { $push: { replies: body } },
       { new: true, runValidators: true }
     )
-      .then(dbThoughtData => {
+      .then((dbThoughtData) => {
         if (!dbThoughtData) {
-          res.status(404).json({ message: 'No Thought found with this id!' });
+          res.status(404).json({ message: "No Thought found with this id!" });
           return;
         }
         res.json(dbThoughtData);
       })
-      .catch(err => res.json(err));
+      .catch((err) => res.json(err));
   },
 
   // remove Reaction
   removeReaction({ params }, res) {
     Reaction.findOneAndDelete({ _id: params.ReactionId })
-      .then(deletedReaction => {
+      .then((deletedReaction) => {
         if (!deletedReaction) {
-          return res.status(404).json({ message: 'No Reaction with this id!' });
+          return res.status(404).json({ message: "No Reaction with this id!" });
         }
         return Thought.findOneAndUpdate(
           { _id: params.ThoughtId },
@@ -51,29 +52,26 @@ const ReactionController = {
           { new: true }
         );
       })
-      .then(dbThoughtData => {
+      .then((dbThoughtData) => {
         if (!dbThoughtData) {
-          res.status(404).json({ message: 'No Thought found with this id!' });
+          res.status(404).json({ message: "No Thought found with this id!" });
           return;
         }
         res.json(dbThoughtData);
       })
-      .catch(err => res.json(err));
+      .catch((err) => res.json(err));
   },
 
-
   // remove reply
-removeReply({ params }, res) {
-  Reaction.findOneAndUpdate(
-    { _id: params.ReactionId },
-    { $pull: { replies: { replyId: params.replyId } } },
-    { new: true }
-  )
-    .then(dbThoughtData => res.json(dbThoughtData))
-    .catch(err => res.json(err));
-},
-
-
+  removeReply({ params }, res) {
+    Reaction.findOneAndUpdate(
+      { _id: params.ReactionId },
+      { $pull: { replies: { replyId: params.replyId } } },
+      { new: true }
+    )
+      .then((dbThoughtData) => res.json(dbThoughtData))
+      .catch((err) => res.json(err));
+  },
 };
 
 const ReplySchema = new Schema(
@@ -81,11 +79,11 @@ const ReplySchema = new Schema(
     // set custom id to avoid confusion with parent Reaction _id
     replyId: {
       type: Schema.Types.ObjectId,
-      default: () => new Types.ObjectId()
+      default: () => new Types.ObjectId(),
     },
     replyBody: {
       type: String,
-      required: true
+      required: true,
     },
     writtenBy: {
       type: String,
@@ -94,14 +92,14 @@ const ReplySchema = new Schema(
     createdAt: {
       type: Date,
       default: Date.now,
-      get: createdAtVal => dateFormat(createdAtVal)
-    }
+      get: (createdAtVal) => dateFormat(createdAtVal),
+    },
   },
   {
     toJSON: {
-      getters: true
-    }
+      getters: true,
+    },
   }
 );
 
-module.exports = reactionController;
+module.exports = ReactionController;
