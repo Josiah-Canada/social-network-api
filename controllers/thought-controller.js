@@ -1,8 +1,9 @@
 const Thought = require("../models/thought");
+const User = require("../models/user")
 
 const thoughtController = {
   // get all Thoughts
-  getAllThought(req, res) {
+  getAllThoughts(req, res) {
     Thought.find({})
       .populate({
         path: "reaction",
@@ -41,7 +42,7 @@ const thoughtController = {
 
   // createThought
   createThought({ body }, res) {
-    Thought.create(body)
+    Thought.create(body).then((dbThoughtData) => User.findOneAndUpdate({_id:body.userId}, {$push:{thoughts:dbThoughtData._id}},{new:true}))
       .then((dbThoughtData) => res.json(dbThoughtData))
       .catch((err) => res.status(400).json(err));
   },

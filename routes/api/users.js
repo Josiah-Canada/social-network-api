@@ -1,24 +1,23 @@
 const {
-    addUser,
-    removeUser,
-    updateUser
-  } = require('../../controllers/comment-controller');
+   getAllUsers,
+   createUser,
+   getUserById,
+   updateUser,
+   deleteUser
+  
+  } = require('../../controllers/user-controller');
 
 const router = require('express').Router();
 
+router.route("/").get(getAllUsers)
 
-router
-  .route('/:userId/')
-  .delete('/:userId')
-  .put(':/userId')
+router.route("/").post(createUser)
 
-router.route('/:userId/').put(updateUser)
+router.route("/:id").get(getUserById)
 
-// /api/comments/<userId>
-router.route('/:userId').post(addUser);
+router.route('/:id/').put(updateUser)
 
-// /api/comments/<userId>/<commentId>
-router.route('/:userId/').delete(removeUser);
+router.route('/:id/').delete(deleteUser);
 
 
 module.exports = router;

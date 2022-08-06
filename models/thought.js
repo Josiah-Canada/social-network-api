@@ -1,47 +1,26 @@
 const dateFormat = require("../utils/dateFormat");
 const { Schema, model, Types } = require("mongoose");
 
-const ThoughtSchema = new Schema(
+const ReactionSchema = new Schema(
   {
-    // set custom id to avoid confusion with parent Thought's _id field
     reactionId: {
       type: Schema.Types.ObjectId,
       default: () => new Types.ObjectId(),
     },
     reactionBody: {
       type: String,
+      required: true,
+      maxLength: 280,
     },
-    writtenBy: {
+    username: {
       type: String,
+      required: true,
     },
     createdAt: {
       type: Date,
       default: Date.now,
       get: (createdAtVal) => dateFormat(createdAtVal),
     },
-  },
-  {
-    toJSON: {
-      getters: true,
-    },
-  }
-);
-
-const ReactionSchema = new Schema(
-  {
-    writtenBy: {
-      type: String,
-    },
-    ThoughtBody: {
-      type: String,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-      get: (createdAtVal) => dateFormat(createdAtVal),
-    },
-    // use ThoughtSchema to validate data for a reply
-    replies: [ThoughtSchema],
   },
   {
     toJSON: {
@@ -52,12 +31,42 @@ const ReactionSchema = new Schema(
   }
 );
 
-ReactionSchema.virtual("replyCount").get(function () {
-  return this.replies.length;
-});
+const ThoughtSchema = new Schema(
+  {
+    // set custom id to avoid confusion with parent Thought's _id field
+     thoughtText: {
+      type: String,
+      required: true,
+      maxLength: 280,
+      minLength: 1
+    },
+    username: {
+      type: String,
+      required: true,
+    },
+    reactions: {
+      type: [ReactionSchema],
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      get: (createdAtVal) => dateFormat(createdAtVal),
+    },
+  },
+  {
+    toJSON: {
+      getters: true,
+      virtual: true,
 
-const Thought = model("Thought", ReactionSchema);
+    },
+  }
+);
+
+ThoughtSchema.virtual("reactionCount").get(function() {
+return this.reactions.length
+})
+
+const Thought = model("Thought", ThoughtSchema);
 
 module.exports = Thought;
-// export thought schema
-module.exports = ThoughtSchema;
+
