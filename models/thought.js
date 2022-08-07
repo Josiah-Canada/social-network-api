@@ -44,9 +44,7 @@ const ThoughtSchema = new Schema(
       type: String,
       required: true,
     },
-    reactions: {
-      type: [ReactionSchema],
-    },
+    reactions:  [ReactionSchema],
     createdAt: {
       type: Date,
       default: Date.now,
